@@ -1,8 +1,10 @@
-# Portfolio Website
+# Portfolio Website - Jaren
 
 A modern, responsive portfolio website built with HTML, CSS, and JavaScript.
 
-![Portfolio Preview](https://via.placeholder.com/1200x630/6366f1/ffffff?text=Portfolio+Preview)
+**🌐 Live Site:** [https://tranquil-zabaione-5dbfe8.netlify.app](https://tranquil-zabaione-5dbfe8.netlify.app)
+
+**📦 GitHub Repository:** [https://github.com/karinarina2000/portfolio_ni_jaren](https://github.com/karinarina2000/portfolio_ni_jaren)
 
 ## ✨ Features
 
@@ -60,21 +62,35 @@ portfolio/
 
 ## 📦 Deployment
 
-### GitHub Pages
+This portfolio is currently deployed and live on:
 
-1. Push to GitHub repository
-2. Go to Settings → Pages
-3. Select `main` branch and save
-4. Site will be live at `https://your-username.github.io/repo-name/`
+### ✅ Netlify (Production)
+- **Live URL:** [https://tranquil-zabaione-5dbfe8.netlify.app](https://tranquil-zabaione-5dbfe8.netlify.app)
+- **Dashboard:** [Netlify Admin](https://app.netlify.com/projects/tranquil-zabaione-5dbfe8)
+- **Auto-Deploy:** Enabled - Automatically deploys when you push to the main branch
 
-### Netlify
+### 📝 How to Update the Site
 
-1. Go to [netlify.com](https://netlify.com)
-2. Drag and drop the `portfolio` folder OR connect GitHub
-3. Build settings:
-   - **Build command**: (leave empty)
-   - **Publish directory**: `/`
-4. Click **Deploy**
+1. Make your changes to the code
+2. Commit and push to GitHub:
+   ```bash
+   git add .
+   git commit -m "Your update message"
+   git push origin main
+   ```
+3. Netlify will automatically deploy your changes within minutes!
+
+### Alternative Deployment Options
+
+**GitHub Pages:**
+1. Go to repository Settings → Pages
+2. Select `main` branch and save
+3. Site will be live at `https://karinarina2000.github.io/portfolio_ni_jaren/`
+
+**Manual Netlify Deploy:**
+```bash
+netlify deploy --prod
+```
 
 ### Contact Form Setup
 
