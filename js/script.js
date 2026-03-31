@@ -8,19 +8,32 @@ const html = document.documentElement;
 const savedTheme = localStorage.getItem('theme') || 'dark';
 html.setAttribute('data-theme', savedTheme);
 
-themeToggle.addEventListener('click', () => {
-    const currentTheme = html.getAttribute('data-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
-    html.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
 
-    // Add animation to toggle button
-    themeToggle.style.transform = 'rotate(360deg)';
-    setTimeout(() => {
-        themeToggle.style.transform = '';
-    }, 300);
-});
+        // Add animation to toggle button
+        themeToggle.style.transform = 'rotate(360deg)';
+        setTimeout(() => {
+            themeToggle.style.transform = '';
+        }, 300);
+        
+        // Update navbar background immediately
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            const isLightTheme = newTheme === 'light';
+            if (window.scrollY > 50) {
+                navbar.style.background = isLightTheme ? 'rgba(255, 255, 255, 0.95)' : 'rgba(10, 10, 15, 0.95)';
+            } else {
+                navbar.style.background = isLightTheme ? 'rgba(255, 255, 255, 0.8)' : 'rgba(10, 10, 15, 0.8)';
+            }
+        }
+    });
+}
 
 // ================================
 // Mobile Navigation Toggle
@@ -71,6 +84,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // Navbar Background on Scroll
 // ================================
 const navbar = document.querySelector('.navbar');
+const scrollProgress = document.getElementById('scroll-progress');
 
 window.addEventListener('scroll', () => {
     const isLightTheme = html.getAttribute('data-theme') === 'light';
@@ -81,6 +95,13 @@ window.addEventListener('scroll', () => {
     } else {
         navbar.style.background = isLightTheme ? 'rgba(255, 255, 255, 0.8)' : 'rgba(10, 10, 15, 0.8)';
         navbar.style.boxShadow = 'none';
+    }
+    
+    // Update scroll progress bar
+    if (scrollProgress) {
+        const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (window.scrollY / windowHeight) * 100;
+        scrollProgress.style.width = scrolled + '%';
     }
 });
 
@@ -305,6 +326,156 @@ function animateCounter(element, target, options = {}) {
         }
     }, stepTime);
 }
+
+// ================================
+// Parallax Effect for Hero Section
+// ================================
+const heroSection = document.querySelector('.hero');
+const heroContent = document.querySelector('.hero-content');
+const heroVisual = document.querySelector('.hero-visual');
+
+if (heroSection && heroContent && heroVisual) {
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const rate = scrolled * 0.5;
+        
+        heroContent.style.transform = `translateY(${rate * 0.3}px)`;
+        heroVisual.style.transform = `translateY(${rate * 0.5}px)`;
+    });
+}
+
+// ================================
+// Magnetic Button Effect
+// ================================
+const magneticButtons = document.querySelectorAll('.btn-primary, .btn-secondary');
+
+magneticButtons.forEach(button => {
+    button.addEventListener('mousemove', (e) => {
+        const rect = button.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        
+        button.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px) scale(1.05)`;
+    });
+    
+    button.addEventListener('mouseleave', () => {
+        button.style.transform = 'translate(0, 0) scale(1)';
+    });
+});
+
+// ================================
+// 3D Tilt Effect on Project Cards
+// ================================
+const tiltCards = document.querySelectorAll('.project-card, .certificate-card');
+
+tiltCards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        const rotateX = (y - centerY) / 10;
+        const rotateY = (centerX - x) / 10;
+        
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+    });
+    
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
+    });
+});
+
+// ================================
+// Particle Background Effect
+// ================================
+function createParticles() {
+    const particleContainer = document.createElement('div');
+    particleContainer.className = 'particles-bg';
+    document.body.insertBefore(particleContainer, document.body.firstChild);
+    
+    for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 20 + 's';
+        particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+        particleContainer.appendChild(particle);
+    }
+}
+
+createParticles();
+
+// ================================
+// Smooth Reveal Animations
+// ================================
+const revealElements = document.querySelectorAll('.skill-category, .timeline-item, .project-card, .certificate-card');
+
+const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+            setTimeout(() => {
+                entry.target.classList.add('reveal-active');
+            }, index * 100);
+            revealObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.1 });
+
+revealElements.forEach(el => {
+    el.classList.add('reveal');
+    revealObserver.observe(el);
+});
+
+// ================================
+// Cursor Trail Effect
+// ================================
+let cursorTrail = [];
+const trailLength = 20;
+
+document.addEventListener('mousemove', (e) => {
+    cursorTrail.push({ x: e.clientX, y: e.clientY, time: Date.now() });
+    
+    if (cursorTrail.length > trailLength) {
+        cursorTrail.shift();
+    }
+});
+
+// ================================
+// Text Gradient Animation on Hover
+// ================================
+const titles = document.querySelectorAll('h1, h2, h3');
+
+titles.forEach(title => {
+    title.addEventListener('mouseenter', function() {
+        this.style.backgroundImage = 'linear-gradient(90deg, #6366f1, #8b5cf6, #a855f7, #6366f1)';
+        this.style.backgroundSize = '200% auto';
+        this.style.backgroundClip = 'text';
+        this.style.webkitBackgroundClip = 'text';
+        this.style.webkitTextFillColor = 'transparent';
+        this.style.animation = 'gradientShift 3s linear infinite';
+    });
+    
+    title.addEventListener('mouseleave', function() {
+        this.style.backgroundImage = '';
+        this.style.backgroundClip = '';
+        this.style.webkitBackgroundClip = '';
+        this.style.webkitTextFillColor = '';
+        this.style.animation = '';
+    });
+});
+
+// ================================
+// Floating Icons Animation
+// ================================
+const floatingIcons = document.querySelectorAll('.floating-icons .icon');
+
+floatingIcons.forEach((icon, index) => {
+    icon.style.animationDelay = `${index * 0.2}s`;
+});
 
 // ================================
 // Console Message for Developers
