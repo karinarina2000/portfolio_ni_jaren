@@ -73,11 +73,13 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 const navbar = document.querySelector('.navbar');
 
 window.addEventListener('scroll', () => {
+    const isLightTheme = html.getAttribute('data-theme') === 'light';
+
     if (window.scrollY > 50) {
-        navbar.style.background = 'rgba(10, 10, 15, 0.95)';
+        navbar.style.background = isLightTheme ? 'rgba(255, 255, 255, 0.95)' : 'rgba(10, 10, 15, 0.95)';
         navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
     } else {
-        navbar.style.background = 'rgba(10, 10, 15, 0.8)';
+        navbar.style.background = isLightTheme ? 'rgba(255, 255, 255, 0.8)' : 'rgba(10, 10, 15, 0.8)';
         navbar.style.boxShadow = 'none';
     }
 });
@@ -265,9 +267,13 @@ const statsObserver = new IntersectionObserver((entries) => {
         if (entry.isIntersecting) {
             const statNumbers = entry.target.querySelectorAll('.stat-number');
             statNumbers.forEach(stat => {
-                const target = parseInt(stat.textContent);
+                const rawValue = stat.textContent.trim();
+                const hasPlus = rawValue.includes('+');
+                const target = parseFloat(rawValue.replace('+', ''));
+                const hasDecimal = rawValue.includes('.');
+
                 if (!isNaN(target)) {
-                    animateCounter(stat, target);
+                    animateCounter(stat, target, { hasPlus, hasDecimal });
                 }
             });
             statsObserver.unobserve(entry.target);
@@ -280,7 +286,8 @@ if (heroStats) {
     statsObserver.observe(heroStats);
 }
 
-function animateCounter(element, target) {
+function animateCounter(element, target, options = {}) {
+    const { hasPlus = false, hasDecimal = false } = options;
     let current = 0;
     const increment = target / 50;
     const duration = 2000;
@@ -289,10 +296,12 @@ function animateCounter(element, target) {
     const timer = setInterval(() => {
         current += increment;
         if (current >= target) {
-            element.textContent = target + '+';
+            const finalValue = hasDecimal ? target.toFixed(1) : Math.round(target).toString();
+            element.textContent = hasPlus ? `${finalValue}+` : finalValue;
             clearInterval(timer);
         } else {
-            element.textContent = Math.floor(current) + '+';
+            const inProgressValue = hasDecimal ? current.toFixed(1) : Math.floor(current).toString();
+            element.textContent = hasPlus ? `${inProgressValue}+` : inProgressValue;
         }
     }, stepTime);
 }
