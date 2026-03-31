@@ -219,7 +219,7 @@ if (contactForm) {
 const titleElement = document.querySelector('.title');
 if (titleElement) {
     const titles = [
-        'CS Student | OJT Experience',
+        'IT Student | OJT Experience',
         'Full Stack Developer',
         'Problem Solver & Learner',
         'Building Real Projects'
@@ -310,7 +310,7 @@ function animateCounter(element, target, options = {}) {
 // Console Message for Developers
 // ================================
 console.log('%c👨‍🎓 My Portfolio', 'color: #6366f1; font-size: 24px; font-weight: bold;');
-console.log('%cCS Student | OJT Journey | Full Stack Developer', 'color: #a1a1aa; font-size: 12px;');
+console.log('%cIT Student | OJT Journey | Full Stack Developer', 'color: #a1a1aa; font-size: 12px;');
 console.log('%cOpen to Opportunities & Collaboration', 'color: #6366f1; font-size: 12px;');
 
 // ================================
