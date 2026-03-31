@@ -2,7 +2,7 @@
 
 A modern, responsive portfolio website built with HTML, CSS, and JavaScript.
 
-![Portfolio Preview](https://via.placeholder.com/1200x630/6366f1/ffffff?text=Portfolio+Preview)
+
 
 ## ✨ Features
 
