@@ -8,6 +8,11 @@
   publish = "."
 
 [[redirects]]
+  from = "/api/contact"
+  to = "/.netlify/functions/send-contact"
+  status = 200
+
+[[redirects]]
   # Handle SPA routing if needed
   from = "/*"
   to = "/index.html"

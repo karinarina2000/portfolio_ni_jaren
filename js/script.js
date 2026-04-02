@@ -197,19 +197,58 @@ if (contactForm) {
         const formData = new FormData(contactForm);
         const submitButton = contactForm.querySelector('button[type="submit"]');
         const originalButtonText = submitButton.innerHTML;
+        const apiEndpoint = (contactForm.dataset.apiEndpoint || '/api/contact').trim();
+        const actionUrl = (contactForm.getAttribute('action') || '').trim();
+        const hasFormspreeEndpoint = actionUrl && !actionUrl.includes('your-form-id');
+        const isNetlifyForm = contactForm.hasAttribute('data-netlify');
 
         // Show loading state
         submitButton.disabled = true;
         submitButton.innerHTML = '<span>Sending...</span>';
 
         try {
-            const response = await fetch(contactForm.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
+            let response;
+
+            if (apiEndpoint) {
+                const payload = {
+                    name: (formData.get('name') || '').toString().trim(),
+                    email: (formData.get('email') || '').toString().trim(),
+                    subject: (formData.get('subject') || '').toString().trim(),
+                    message: (formData.get('message') || '').toString().trim(),
+                    botField: (formData.get('bot-field') || '').toString().trim()
+                };
+
+                response = await fetch(apiEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+            } else if (hasFormspreeEndpoint) {
+                response = await fetch(actionUrl, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+            } else if (isNetlifyForm) {
+                const encodedData = new URLSearchParams();
+                formData.forEach((value, key) => {
+                    encodedData.append(key, value.toString());
+                });
+
+                response = await fetch('/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: encodedData.toString()
+                });
+            } else {
+                throw new Error('No contact form endpoint configured.');
+            }
 
             if (response.ok) {
                 // Success message
@@ -223,6 +262,46 @@ if (contactForm) {
                     submitButton.style.background = '';
                 }, 3000);
             } else {
+                const fallbackAllowed = apiEndpoint && (hasFormspreeEndpoint || isNetlifyForm);
+
+                if (fallbackAllowed) {
+                    if (hasFormspreeEndpoint) {
+                        response = await fetch(actionUrl, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        });
+                    } else {
+                        const encodedData = new URLSearchParams();
+                        formData.forEach((value, key) => {
+                            encodedData.append(key, value.toString());
+                        });
+
+                        response = await fetch('/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: encodedData.toString()
+                        });
+                    }
+                }
+
+                if (response && response.ok) {
+                    submitButton.innerHTML = '<span>Message Sent! ✓</span>';
+                    submitButton.style.background = 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)';
+                    contactForm.reset();
+
+                    setTimeout(() => {
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = originalButtonText;
+                        submitButton.style.background = '';
+                    }, 3000);
+                    return;
+                }
+
                 // Error message
                 submitButton.innerHTML = '<span>Something went wrong. Try again.</span>';
                 submitButton.disabled = false;

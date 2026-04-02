@@ -1,0 +1,10 @@
+{
+  "name": "portfolio_ni_jaren",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Portfolio contact email backend dependencies",
+  "license": "MIT",
+  "dependencies": {
+    "nodemailer": "^6.9.16"
+  }
+}

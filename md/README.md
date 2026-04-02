@@ -12,7 +12,7 @@ A modern, responsive portfolio website built with HTML, CSS, and JavaScript.
 - 📱 **Fully Responsive** - Works on all devices and screen sizes
 - ⚡ **Smooth Animations** - Scroll animations and hover effects
 - 🎯 **Project Filtering** - Filter projects by category
-- 📝 **Contact Form** - Integrated with Formspree for email handling
+- 📝 **Contact Form** - Integrated with Netlify Forms (with optional Formspree support)
 - 🌟 **Modern Design** - Clean, professional aesthetics
 - ♿ **Accessible** - ARIA labels and semantic HTML
 - 🚀 **Performance Optimized** - Fast loading with minimal dependencies
@@ -94,9 +94,24 @@ netlify deploy --prod
 
 ### Contact Form Setup
 
-1. Go to [formspree.io](https://formspree.io)
-2. Create a free account and new form
-3. Replace `your-form-id` in `index.html` with your Formspree form ID
+Default behavior sends emails through a Netlify Function (`/api/contact`) using SMTP.
+
+1. In Netlify, open **Site settings → Environment variables**.
+2. Add these variables:
+    - `SMTP_HOST` (example: `smtp.gmail.com`)
+    - `SMTP_PORT` (usually `587`)
+    - `SMTP_SECURE` (`false` for port 587, `true` for port 465)
+    - `SMTP_USER` (your sender email account)
+    - `SMTP_PASS` (app password or SMTP password)
+    - `CONTACT_TO_EMAIL` (where you want to receive messages, e.g. your Gmail)
+3. Redeploy your site.
+
+Gmail tip:
+- Use a Google App Password for `SMTP_PASS` (not your normal Gmail password).
+
+Optional fallback setup:
+1. Add a Formspree endpoint to the contact form `action` attribute in `html/index.html`.
+2. The script will use Formspree if configured and the API endpoint is unavailable.
 
 ## 📱 Sections
 
